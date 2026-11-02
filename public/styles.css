@@ -3053,7 +3053,8 @@ h3 {
   font-weight: 400;
 }
 .form-grid {
-  gap: 15px 20px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 15px;
 }
 input:not([type="checkbox"]),
 select,
@@ -3389,4 +3390,110 @@ textarea {
 }
 .hero-visual .floating-note div > span {
   font-size: 12px;
+}
+
+/* Client inquiry: a linear reading path with an explicit review step. */
+.hero-description {
+  max-width: 44ch;
+}
+.contact-address > span {
+  display: block;
+  margin-bottom: 8px;
+  color: inherit;
+}
+.contact-address a {
+  display: inline-block;
+  padding-block: 8px;
+}
+.contact-copy > .contact-caption {
+  display: block;
+}
+.quote-form .field {
+  min-width: 0;
+}
+.quote-form textarea {
+  resize: vertical;
+  caret-color: var(--teal);
+}
+.quote-form input::placeholder,
+.quote-form textarea::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+.consent-row {
+  align-items: start;
+}
+.consent-row label {
+  padding-block: 10px;
+}
+.consent-row input {
+  margin-top: 13px;
+}
+.draft-review {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  margin-top: 24px;
+}
+.draft-review h4 {
+  font-family: var(--display);
+  color: var(--navy);
+  font-size: 21px;
+  line-height: 1.35;
+  margin: 0 0 12px;
+}
+.draft-review p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+.draft-review label {
+  display: block;
+  color: var(--navy);
+  font-size: 14px;
+  font-weight: 650;
+  margin: 20px 0 8px;
+}
+.draft-review textarea {
+  display: block;
+  width: 100%;
+  min-height: 230px;
+  padding: 14px;
+  line-height: 1.6;
+  background: var(--mist);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+}
+#draft-help {
+  margin-top: 12px;
+}
+.secondary-button {
+  background: var(--paper);
+  color: var(--teal-dark);
+  border-color: var(--teal);
+}
+.secondary-button:hover {
+  background: var(--mist);
+  color: var(--teal-dark);
+}
+#copy-draft {
+  width: 100%;
+  margin-top: 12px;
+  justify-content: center;
+  min-height: 48px;
+}
+#copy-status:not(:empty) {
+  margin-top: 12px;
+  color: var(--teal-dark);
+}
+#download-request {
+  margin-top: 14px;
+  min-height: 44px;
+}
+@media (max-width: 600px) {
+  .contact-copy > .contact-caption {
+    display: block;
+  }
+  .hero-description {
+    max-width: 38ch;
+  }
 }

@@ -1,4 +1,4 @@
-export function createInquiryEmail(recipient, data) {
+export function createInquiryDraft(recipient, data) {
   if (
     !/^[A-Za-z0-9.!#$%&'*+/=^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(
       recipient,
@@ -21,5 +21,16 @@ export function createInquiryEmail(recipient, data) {
     .filter(([key]) => data[key])
     .map(([key, label]) => `${label}: ${data[key]}`)
     .join("\n\n");
-  return `mailto:${recipient}?subject=${encodeURIComponent(`Project inquiry — ${data.business}`)}&body=${encodeURIComponent(body)}`;
+  const subject = `Project inquiry — ${data.business || data.name || "Your project"}`;
+  return {
+    recipient,
+    subject,
+    body,
+    text: `To: ${recipient}\nSubject: ${subject}\n\n${body}`,
+    mailto: `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+  };
+}
+
+export function createInquiryEmail(recipient, data) {
+  return createInquiryDraft(recipient, data).mailto;
 }

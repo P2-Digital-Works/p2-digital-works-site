@@ -1,7 +1,7 @@
 import "./navigation.js";
 import { validateQuote } from "./validation.js";
 import { deliveryEnabled, contactEmail } from "./site-config.js";
-import { createInquiryEmail } from "./inquiry.js";
+import { createInquiryDraft } from "./inquiry.js";
 const form = document.querySelector("#quote-form");
 for (const link of document.querySelectorAll("[data-service]"))
   link.addEventListener("click", () => {
@@ -116,7 +116,11 @@ const status = document.querySelector("#form-status"),
   submit = document.querySelector("#submit-quote"),
   submitLabel = document.querySelector("#submit-label"),
   download = document.querySelector("#download-request"),
-  emailDraft = document.querySelector("#email-draft");
+  emailDraft = document.querySelector("#email-draft"),
+  draftReview = document.querySelector("#draft-review"),
+  draftText = document.querySelector("#draft-text"),
+  copyDraft = document.querySelector("#copy-draft"),
+  copyStatus = document.querySelector("#copy-status");
 let downloadUrl,
   busy = false;
 const setStatus = (message, tone = "") => {
@@ -150,20 +154,36 @@ const renderErrors = (errors) => {
     else field.removeAttribute("aria-invalid");
   }
 };
-const prepareDownload = (data) => {
+const prepareDownload = (text) => {
   if (downloadUrl) URL.revokeObjectURL(downloadUrl);
-  const rows = [
-    "P2 Digital Works — project request",
-    "This copy is a brief, not proof of delivery.",
-    "",
-    ...Object.entries(data).map(([k, v]) => `${k}: ${v}`),
-  ];
   downloadUrl = URL.createObjectURL(
-    new Blob([rows.join("\n")], { type: "text/plain;charset=utf-8" }),
+    new Blob([text + "\n\nSaved draft — not proof of delivery."], {
+      type: "text/plain;charset=utf-8",
+    }),
   );
   download.href = downloadUrl;
   download.hidden = false;
 };
+copyDraft.addEventListener("click", async () => {
+  const text = draftText.value;
+  if (!text || draftReview.hidden) return;
+  copyDraft.disabled = true;
+  try {
+    await navigator.clipboard.writeText(text);
+    if (draftText.value === text && !draftReview.hidden)
+      copyStatus.textContent =
+        "Draft copied. Paste it into a new email, then send it. Nothing has been sent from this website.";
+  } catch {
+    if (draftText.value === text && !draftReview.hidden) {
+      draftText.focus();
+      draftText.select();
+      copyStatus.textContent =
+        "Automatic copying is unavailable. Your draft is selected; use your device’s Copy command, then paste it into a new email.";
+    }
+  } finally {
+    copyDraft.disabled = false;
+  }
+});
 if (deliveryEnabled) {
   submitLabel.textContent = "Send inquiry";
   document.querySelector("#mode-notice").textContent =
@@ -178,7 +198,11 @@ form.elements.brief.addEventListener("input", (e) => {
   e.target.style.height = "auto";
   e.target.style.height = `${Math.min(400, e.target.scrollHeight + 2)}px`;
 });
-form.addEventListener("input", () => {
+const clearDraft = () => {
+  draftReview.hidden = true;
+  draftText.value = "";
+  copyStatus.textContent = "";
+  submit.hidden = false;
   download.hidden = true;
   emailDraft.hidden = true;
   if (downloadUrl) {
@@ -186,7 +210,8 @@ form.addEventListener("input", () => {
     downloadUrl = undefined;
   }
   if (!busy) setStatus("");
-});
+};
+form.addEventListener("input", clearDraft);
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (busy) return;
@@ -208,15 +233,16 @@ form.addEventListener("submit", async (e) => {
     setStatus("This request could not be accepted.", "error");
     return;
   }
-  prepareDownload(data);
+  const draft = createInquiryDraft(contactEmail, data);
+  prepareDownload(draft.text);
   if (!deliveryEnabled) {
-    setStatus(
-      "Your inquiry is ready. Open the email draft below, then send it from your email app. If your app does not open, use the contact address or save a copy of your brief.",
-      "success",
-    );
-    emailDraft.href = createInquiryEmail(contactEmail, data);
+    setStatus("Your draft is ready. It has not been sent.", "success");
+    draftText.value = draft.text;
+    emailDraft.href = draft.mailto;
     emailDraft.hidden = false;
-    status.focus();
+    draftReview.hidden = false;
+    submit.hidden = true;
+    document.querySelector("#draft-title").focus();
     return;
   }
   busy = true;
@@ -269,7 +295,7 @@ form.addEventListener("submit", async (e) => {
     form.removeAttribute("aria-busy");
     submitLabel.textContent = deliveryEnabled
       ? "Send inquiry"
-      : "Prepare inquiry";
+      : "Review email draft";
   }
 });
 window.addEventListener("pagehide", () => {
@@ -286,9 +312,6 @@ for (const link of document.querySelectorAll("[data-contact-email]")) {
 // A browser-restored page may contain a link whose download was revoked on exit.
 window.addEventListener("pageshow", (event) => {
   if (event.persisted) {
-    download.hidden = true;
-    emailDraft.hidden = true;
-    downloadUrl = undefined;
-    setStatus("");
+    clearDraft();
   }
 });

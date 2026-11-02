@@ -1,3 +1,33 @@
+# Verification — client usability refinement
+
+3 November 2026, Asia/Manila. Local source revision; no publication or real inquiry sending.
+
+## Current checks
+
+- `npm run check`, `npm test` (27 passed, zero failed), `npm run build` (six pages), source Prettier check and `git diff --check` passed after the final code edits.
+- Three new behavior assertions were observed failing before implementation: optional business name, a useful subject when it is absent, and shared email/webmail draft serialization. The existing optional-field type/length guard continued to pass. New model coverage includes Unicode and multiline data and unsafe recipients.
+- Desktop 1280px and mobile 390/320px: no horizontal homepage overflow in measured states; form uses a single column. Hero, inquiry and representative commerce service page were visually inspected.
+- Empty form focused Name; a minimal inquiry with no business/service/budget prepared a visible complete draft addressed to the confirmed contact. Preparing it did not send anything.
+- Copy action reported success in the browser. A separate local QA server changed only the served in-memory clipboard call to throw; fallback focused the read-only draft and selected all 231 characters. A permissions-policy-only attempt did not trigger failure in this browser, so it is not claimed as a denied-permission test. No fault injection was saved in production source.
+- Editing a prepared inquiry cleared the preview text, hid old email/download actions, and restored Review email draft. Optional Phone selection required a phone number, kept the disclosure open, and focused Phone on invalid submission.
+- Mobile navigation closed after a section choice; native concept dialog opened, Escape closed it and restored opener focus. Commerce detail route and Contact us path were checked. Read-only draft computed `resize: vertical`.
+- No warning/error console entries captured in the normal preview's sampled flows. No external mail application was launched and no email receipt or reply was verified.
+- A fresh source reviewer reported no actionable regressions. Its independent run passed 24 tests; three HTTP tests were sandbox-blocked. The primary agent's final permitted run passed all 27.
+
+## Static tools
+
+`docs/verification/client-usability-static-audit.json` retains the strict scan: 12 raw errors. Eleven actionless-button observations correspond to six externally bound menu buttons, three concept buttons, dialog close and Copy email draft. Their handlers exist; representative menu/concept/close/copy actions worked. The twelfth says textarea resize is missing; the shared CSS and browser computed style confirm vertical resizing. These parser limitations are documented, not treated as broken controls or concealed behind a passing scanner claim.
+
+The one final Impeccable scan is retained in `docs/verification/client-usability-detector.json`: seven stylistic observations concern legacy/component accent borders and shared dark shadows. They are inherited styling observations; no task-blocking defect was established from them.
+
+## Limits and handoff
+
+No target-user research, conversion measurement, full assistive-technology/200%-zoom matrix, multi-browser certification, hosted deployment verification of this revision, direct-provider delivery or legal certification is claimed. Existing backend delivery success/failure tests still pass; default public delivery remains user-controlled email. `docs/client-usability-testing.md` defines a qualitative round with technical and nontechnical prospects.
+
+Screenshots: `docs/screenshots/client-usability-desktop.png`, `client-usability-mobile.png`, and `client-usability-mobile-form.png`. The live Netlify site observed in the audit is separate from this local revision. Historical deployment statements below describe the earlier work and are superseded by the current audit and README.
+
+---
+
 # Verification — official website revision
 
 3 November 2026 (Asia/Manila). Node 26.13.0 used for checks; declared compatibility is Node 22.9+. No separate older-runtime test or hosted deployment is claimed.

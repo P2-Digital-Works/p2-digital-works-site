@@ -18,9 +18,9 @@ Open **http://localhost:3000**. Stop with Ctrl+C. Set a different `PORT` in `.en
 
 The owner confirmed **paulrodolf.castor@g.msuiit.edu.ph** as the public inquiry address. It is linked directly on the homepage and Privacy page.
 
-The form asks for name, email, business/project, description, and permission to respond. Interested service, timeframe, budget context, business type, and phone preferences are optional. There are no preset price bands.
+The form asks for name, email, description, and permission to respond. Business/project name is optional. Interested service, timeframe, budget context, business type, and phone preferences are optional. There are no preset price bands.
 
-**Prepare inquiry** validates the entries, then presents **Open email draft**. That link prepares a message in the visitor's email app addressed to the confirmed email. The visitor reviews and sends it themselves. The website does not claim to have sent or delivered the email. A text download provides a recovery option if no email client is configured or the draft is too long for the client. No real inquiry was sent during verification.
+**Review email draft** validates the entries, then presents the complete draft with **Open email draft** and **Copy email draft**. The copy route supports visitors using browser-based email; a failed copy selects the text for manual copying. That link prepares a message in the visitor's email app addressed to the confirmed email. The visitor reviews and sends it themselves. The website does not claim to have sent or delivered the email. A text download provides a recovery option if no email client is configured or the draft is too long for the client. No real inquiry was sent during verification.
 
 This route works without an API key or email-delivery account. It depends on the visitor being able to use an email client or write directly to the displayed address.
 
@@ -58,7 +58,7 @@ npm run build
 
 Use a hosting plan appropriate for business use. `server.mjs` is a loopback development server; the supplied production setup targets static hosting with optional platform functions.
 
-No deployment has been made in this chat. After choosing the public host/domain, verify HTTPS, page routes, canonical URLs, robots/sitemap, and the intended inquiry route on the deployed site. Direct delivery needs a real receipt/failure test with the selected receiver.
+The audit observed a live site at https://p2digitalworks.netlify.app and netlify.toml sets that production origin. Hosting ownership and exact deployed revision remain unverified. This client-usability revision has not been published. After deploying it, verify HTTPS, page routes, canonical URLs, robots/sitemap, and the inquiry route on the deployed site. Direct delivery needs a real receipt/failure test with the selected receiver.
 
 ## Business truth and content
 

@@ -17,9 +17,9 @@ export function validateQuote(input) {
   for (const [key, min, max, label] of [
     ["name", 2, 100, "your name"],
     ["email", 3, 254, "a valid email address"],
-    ["business", 2, 150, "your business or project name"],
+    ["business", 0, 150, "your business or project name"],
     ["businessType", 0, 100, "your business type"],
-    ["brief", 20, 5000, "a project brief of 20–5,000 characters"],
+    ["brief", 20, 5000, "a short description of 20–5,000 characters"],
     ["phone", 0, 40, "a phone number"],
     ["budget", 0, 100, "a short budget description"],
   ]) {
