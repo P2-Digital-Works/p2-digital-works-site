@@ -1,3 +1,4 @@
+import { publicConfigScript, applySiteSettings } from "./lib/site-config.js";
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -11,6 +12,7 @@ const types = {
   ".css": "text/css; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".png": "image/png",
+  ".jpg": "image/jpeg",
   ".svg": "image/svg+xml",
   ".txt": "text/plain; charset=utf-8",
   ".xml": "application/xml",
@@ -56,11 +58,7 @@ export function createApp(env = process.env) {
           "Content-Type": types[".js"],
           "Cache-Control": "no-store",
         });
-        res.end(
-          req.method === "HEAD"
-            ? ""
-            : `export const deliveryEnabled = ${Boolean(env.QUOTE_WEBHOOK_URL)};`,
-        );
+        res.end(req.method === "HEAD" ? "" : publicConfigScript(env));
         return;
       }
       const path = resolve(
@@ -76,7 +74,11 @@ export function createApp(env = process.env) {
         return;
       }
       if (!(await stat(path)).isFile()) throw Error("Not found");
-      const content = await readFile(path);
+      const bytes = await readFile(path);
+      const content =
+        extname(path) === ".html"
+          ? applySiteSettings(bytes.toString(), env)
+          : bytes;
       res.writeHead(200, {
         "Content-Type": types[extname(path)] || "application/octet-stream",
         "Cache-Control": "no-cache",

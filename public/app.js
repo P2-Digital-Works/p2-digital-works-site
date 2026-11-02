@@ -1,53 +1,11 @@
+import "./navigation.js";
 import { validateQuote } from "./validation.js";
-import { deliveryEnabled } from "./site-config.js";
-const menu = document.querySelector(".menu-toggle"),
-  nav = document.querySelector("#main-nav");
-const closeMenu = (restore = false) => {
-  nav.classList.remove("is-open");
-  menu.setAttribute("aria-expanded", "false");
-  if (restore) menu.focus();
-};
-menu.addEventListener("click", () => {
-  const open = menu.getAttribute("aria-expanded") !== "true";
-  menu.setAttribute("aria-expanded", String(open));
-  nav.classList.toggle("is-open", open);
-});
-nav.addEventListener("click", (e) => {
-  if (e.target.closest("a")) closeMenu();
-});
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && menu.getAttribute("aria-expanded") === "true")
-    closeMenu(true);
-});
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".site-header")) closeMenu();
-});
-matchMedia("(min-width:801px)").addEventListener("change", (e) => {
-  if (e.matches) closeMenu();
-});
-document.querySelector("#year").textContent = new Date().getFullYear();
-if ("IntersectionObserver" in window) {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries)
-        if (e.isIntersecting)
-          nav.querySelectorAll("a").forEach((a) => {
-            if (a.hash === `#${e.target.id}`)
-              a.setAttribute("aria-current", "location");
-            else a.removeAttribute("aria-current");
-          });
-    },
-    { rootMargin: "-15% 0px -60% 0px" },
-  );
-  document
-    .querySelectorAll("main>section[id]")
-    .forEach((s) => observer.observe(s));
-}
+import { deliveryEnabled, contactEmail } from "./site-config.js";
+import { createInquiryEmail } from "./inquiry.js";
 const form = document.querySelector("#quote-form");
 for (const link of document.querySelectorAll("[data-service]"))
   link.addEventListener("click", () => {
     form.elements.service.value = link.dataset.service;
-    if (link.dataset.budget) form.elements.budget.value = link.dataset.budget;
     form.dispatchEvent(new Event("input", { bubbles: true }));
     form.elements.service.removeAttribute("aria-invalid");
     document.querySelector("#service-error").textContent = "";
@@ -157,12 +115,20 @@ document.querySelector("#project-cta").addEventListener("click", (e) => {
 const status = document.querySelector("#form-status"),
   submit = document.querySelector("#submit-quote"),
   submitLabel = document.querySelector("#submit-label"),
-  download = document.querySelector("#download-request");
+  download = document.querySelector("#download-request"),
+  emailDraft = document.querySelector("#email-draft");
 let downloadUrl,
   busy = false;
 const setStatus = (message, tone = "") => {
   status.textContent = message;
   status.className = `form-status ${tone}`;
+};
+const focusField = (name) => {
+  const field = form.elements[name];
+  if (!field) return;
+  const disclosure = field.closest("details");
+  if (disclosure) disclosure.open = true;
+  field.focus();
 };
 const renderErrors = (errors) => {
   for (const name of [
@@ -199,9 +165,9 @@ const prepareDownload = (data) => {
   download.hidden = false;
 };
 if (deliveryEnabled) {
-  submitLabel.textContent = "Send quote request";
+  submitLabel.textContent = "Send inquiry";
   document.querySelector("#mode-notice").textContent =
-    "Online delivery is connected. Your details will be sent for a project discussion.";
+    "Send your inquiry securely through this website. We’ll use your details to discuss your project.";
 }
 form.elements.contact.addEventListener("change", () => {
   const phone = form.elements.contact.value === "Phone";
@@ -214,6 +180,7 @@ form.elements.brief.addEventListener("input", (e) => {
 });
 form.addEventListener("input", () => {
   download.hidden = true;
+  emailDraft.hidden = true;
   if (downloadUrl) {
     URL.revokeObjectURL(downloadUrl);
     downloadUrl = undefined;
@@ -234,7 +201,7 @@ form.addEventListener("submit", async (e) => {
       "Please check the highlighted fields. Your details are still here.",
       "error",
     );
-    form.elements[Object.keys(errors)[0]]?.focus();
+    focusField(Object.keys(errors)[0]);
     return;
   }
   if (raw.website) {
@@ -244,15 +211,20 @@ form.addEventListener("submit", async (e) => {
   prepareDownload(data);
   if (!deliveryEnabled) {
     setStatus(
-      "Your request is ready to download. It has not been sent to P2 Digital Works.",
+      "Your inquiry is ready. Open the email draft below, then send it from your email app. If your app does not open, use the contact address or save a copy of your brief.",
       "success",
     );
+    emailDraft.href = createInquiryEmail(contactEmail, data);
+    emailDraft.hidden = false;
     status.focus();
     return;
   }
   busy = true;
   submit.disabled = true;
   form.setAttribute("aria-busy", "true");
+  form
+    .querySelectorAll("input, select, textarea")
+    .forEach((field) => (field.disabled = true));
   submitLabel.textContent = "Sending request…";
   setStatus("Sending your request. Please keep this page open.");
   try {
@@ -266,7 +238,7 @@ form.addEventListener("submit", async (e) => {
     if (!result.ok) {
       if (payload.errors) {
         renderErrors(payload.errors);
-        form.elements[Object.keys(payload.errors)[0]]?.focus();
+        focusField(Object.keys(payload.errors)[0]);
       }
       throw Error(
         payload.error ||
@@ -289,10 +261,15 @@ form.addEventListener("submit", async (e) => {
       "error",
     );
   } finally {
+    form
+      .querySelectorAll("input, select, textarea")
+      .forEach((field) => (field.disabled = false));
     busy = false;
     submit.disabled = false;
     form.removeAttribute("aria-busy");
-    submitLabel.textContent = "Send quote request";
+    submitLabel.textContent = deliveryEnabled
+      ? "Send inquiry"
+      : "Prepare inquiry";
   }
 });
 window.addEventListener("pagehide", () => {
@@ -301,3 +278,17 @@ window.addEventListener("pagehide", () => {
 
 // Enable only after the validated submit handler has been installed.
 submit.disabled = false;
+
+for (const link of document.querySelectorAll("[data-contact-email]")) {
+  link.href = `mailto:${contactEmail}`;
+  link.textContent = contactEmail;
+}
+// A browser-restored page may contain a link whose download was revoked on exit.
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    download.hidden = true;
+    emailDraft.hidden = true;
+    downloadUrl = undefined;
+    setStatus("");
+  }
+});

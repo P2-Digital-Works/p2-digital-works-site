@@ -44,3 +44,19 @@ test("HTTP endpoint rejects invalid requests and rate limits repeats", () =>
     assert.equal(limited.status, 429);
     assert.equal(limited.headers.get("retry-after"), "900");
   }));
+test("service and privacy pages are served as usable independent pages", () =>
+  withServer(async (base) => {
+    for (const path of [
+      "/services/websites.html",
+      "/services/applications.html",
+      "/services/commerce.html",
+      "/services/care.html",
+      "/privacy.html",
+    ]) {
+      const result = await fetch(base + path);
+      assert.equal(result.status, 200);
+      const html = await result.text();
+      assert.match(html, /P2 Digital Works/);
+      assert.doesNotMatch(html, /₱|#pricing/);
+    }
+  }));

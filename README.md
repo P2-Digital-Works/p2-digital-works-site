@@ -1,36 +1,46 @@
-# P2 Digital Works website MVP
+# P2 Digital Works — official website source
 
-A complete, dependency-free website with Home, Services, Work, Pricing, About, and Contact sections. Includes a responsive navigation menu, three clearly labeled concept projects with detail dialogs, FAQs, package-to-form selections, shared client/server quote validation, and an honest request-download preview.
+The inquiry-led revision implements the approved audit. There are no public package prices or monthly fee tiers. The site explains project-based development, written proposals, handover, and separately optional care.
+
+Six crawlable pages: the company homepage, four service detail pages, and Privacy. Home contains Services, Our Work, Approach, About, FAQs, and Contact. The black P² logo, navy/teal/amber identity, and clearly labeled concept projects are retained.
 
 ## Run locally
 
-Install **Node.js 22.9 or newer** (Node 24 LTS recommended), open a terminal in this folder, then run:
+Use Node.js **22.9+**. No dependency installation is required.
 
 ```sh
 npm run dev
 ```
 
-Open **http://localhost:3000**. There is no dependency installation step. Stop the server with Ctrl+C. `npm start` runs the same local server. To change the port, copy `.env.example` to `.env` and edit `PORT`.
+Open **http://localhost:3000**. Stop with Ctrl+C. Set a different `PORT` in `.env` if necessary (copy `.env.example` first).
 
-Do not open `public/index.html` directly: ES modules need an HTTP server.
+## Current inquiry route
 
-## Quote form: two honest modes
+The owner confirmed **paulrodolf.castor@g.msuiit.edu.ph** as the public inquiry address. It is linked directly on the homepage and Privacy page.
 
-**Default preview:** the form validates the details and creates a downloadable text brief. It explicitly says the request has **not been sent**. Personal details stay in page memory until download or navigation; nothing is written to browser storage. The download is a local file under the visitor's control.
+The form asks for name, email, business/project, description, and permission to respond. Interested service, timeframe, budget context, business type, and phone preferences are optional. There are no preset price bands.
 
-**Connected delivery:** set these variables on your hosting platform:
+**Prepare inquiry** validates the entries, then presents **Open email draft**. That link prepares a message in the visitor's email app addressed to the confirmed email. The visitor reviews and sends it themselves. The website does not claim to have sent or delivered the email. A text download provides a recovery option if no email client is configured or the draft is too long for the client. No real inquiry was sent during verification.
 
-| Variable | Use |
+This route works without an API key or email-delivery account. It depends on the visitor being able to use an email client or write directly to the displayed address.
+
+## Optional direct delivery
+
+The same-origin `/api/quote` endpoint can send inquiries through your own HTTPS receiver. To enable it, set these variables in **both build and function environments**, then rebuild/redeploy:
+
+| Variable | Purpose |
 | --- | --- |
-| `QUOTE_WEBHOOK_URL` | Your private HTTPS inquiry receiver, accepting JSON POST requests. |
-| `QUOTE_WEBHOOK_TOKEN` | Optional bearer token for that receiver. Server-only; never exposed to the browser. |
-| `SITE_URL` | Exact public HTTPS origin, e.g. `https://your-confirmed-domain.com`. No path or trailing query. |
+| `CONTACT_EMAIL` | Public destination shown to visitors. Defaults to the owner-confirmed address. |
+| `QUOTE_WEBHOOK_URL` | Private HTTPS receiver accepting JSON POST requests. |
+| `QUOTE_WEBHOOK_TOKEN` | Optional server-only bearer token. |
+| `INQUIRY_PRIVACY_NOTE` | Required for direct-delivery builds: explain the actual receiving service, relevant storage/retention arrangements, and privacy contact. Escaped and rendered on Privacy. |
+| `SITE_URL` | Confirmed public HTTPS origin, with no path or query. |
 
-Set the webhook in **both build and function environments**, then rebuild/redeploy. The build emits only a public capability flag, never the URL or token. The form changes to “Send quote request.” A successful delivery acknowledgment appears only after the receiver returns a 2xx status. That confirms acceptance by the service, not that someone has read an email. A timeout can leave delivery uncertain; the UI explains that before retrying.
+A webhook is not necessarily a raw email-provider API. It must accept the documented inquiry JSON and route it to a monitored inbox or process. Fields: `name`, `email`, `business`, `businessType`, `brief`, `budget`, `service`, `timeline`, `contact`, `phone`, `consent`, `source`, `submittedAt`. No provider credentials or receiver have been supplied or invented.
 
-The receiver gets JSON fields: `name`, `email`, `business`, `businessType`, `service`, `budget`, `timeline`, `contact`, `phone`, `brief`, `consent`, `source`, `submittedAt`. It must accept this schema; a generic email provider API may need an automation or adapter to translate it. No receiver or inbox has been invented or configured. Use a provider you control, confirm its privacy/retention arrangements, and complete the launch items below before enabling collection.
+When configured, the form action becomes **Send inquiry**. It only acknowledges acceptance after the receiver returns 2xx. That does not mean a person has read the inquiry. Network failures and uncertain delivery preserve entered details and explain the recovery path. No automatic retry occurs.
 
-The endpoint includes origin checks, an empty-field spam trap, server validation, a 16 KB request cap, an 8-second upstream timeout, and **five requests per client per 15 minutes per running instance**. Local, Vercel, and Netlify routes share the limiter. Serverless instances do not share memory: configure a durable platform firewall/rate rule for `/api/quote` (and a suitable receiving-service limit) before public delivery. The included limiter is a secondary defense, not a globally durable quota. No automatic retry is performed, to reduce duplicate requests.
+All local and serverless routes share validation, size limits, origin checking, a spam trap, timeout handling, and a bounded per-instance limit of five requests per client per 15 minutes. Serverless instances do not share memory: configure a platform-level/durable rate rule on `/api/quote` before enabling public direct delivery. The in-memory limit is a secondary defense.
 
 ## Build and deploy
 
@@ -40,58 +50,38 @@ npm test
 npm run build
 ```
 
-`dist/` is the generated static site. With no `SITE_URL`, previews intentionally use `noindex,nofollow` and robots disallow. Set a confirmed `SITE_URL` at build time to generate a canonical URL, Open Graph URL, production robots rules, and a one-page sitemap. Section anchors are not falsely listed as separate pages.
+`dist/` contains the static pages/assets. A confirmed `SITE_URL` enables canonical metadata for each page, an actual six-page sitemap, and production robots rules. Until then the output intentionally remains `noindex,nofollow` with robots disallow. No domain ownership or availability is implied.
 
-### Netlify
+- **Netlify:** import this folder as the project root. `netlify.toml` supplies the build, `dist` publish directory, and function adapter. Static-only drag/drop supports the email-app route; repository deployment also includes optional direct delivery.
+- **Vercel:** import this folder as an Other framework project. `vercel.json` supplies the build and output directory; `api/quote.js` supplies the optional direct endpoint.
+- **Other static hosting:** serve `dist`. The default email-app route does not require server code.
 
-Import this folder/repository. The included `netlify.toml` sets the build to `npm run build`, publishes `dist`, and bundles `netlify/functions/quote.mjs` at `/api/quote`. Set Node 22.9+ or 24 and the environment variables in the appropriate build/function scopes. A drag-and-drop upload of `dist` alone supports download preview only; use a repository deployment to include the server function.
+Use a hosting plan appropriate for business use. `server.mjs` is a loopback development server; the supplied production setup targets static hosting with optional platform functions.
 
-### Vercel
+No deployment has been made in this chat. After choosing the public host/domain, verify HTTPS, page routes, canonical URLs, robots/sitemap, and the intended inquiry route on the deployed site. Direct delivery needs a real receipt/failure test with the selected receiver.
 
-Import this folder/repository as an **Other** framework project. The included `vercel.json` builds with `npm run build`, serves `dist`, and the root `api/quote.js` supplies the quote endpoint. Configure the environment variables and redeploy. Use a hosting plan whose current terms allow your business use.
+## Business truth and content
 
-### Other hosting
+- Only the public inquiry email has been confirmed beyond the supplied brand and service brief. No founder name, office, service geography, legal entity, registration, staff, experience statistics, clients, or testimonials have been invented.
+- About describes the offered services and working approach. Add a verified founder/company story when supplied.
+- Northline, Daily Bread, and Pulse are fictional concept explorations. Their dialogs state what is proposed and what is not a working client system. Do not relabel them as paid work or claim measured outcomes.
+- Scope, project fees, payment terms, rights/licensing, schedule, and optional care arrangements belong in the written proposal. The site does not prescribe public amounts.
+- Privacy describes the active email-app behavior. Enabling direct delivery requires the real receiver-specific disclosure. No legal certification or fixed retention promise is invented.
 
-Any static host can serve `dist` in download-preview mode. Connected delivery requires deploying a same-origin `/api/quote` handler as well. `server.mjs` is a loopback-only development server, not a hardened internet-facing production server. The supplied deployment paths are Netlify and Vercel.
+## Assets and maintenance
 
-Platform references checked during development:
-- [Netlify function entrypoints and configuration](https://docs.netlify.com/build/functions/api/)
-- [Netlify function setup](https://docs.netlify.com/build/functions/get-started/)
-- [Vercel Edge runtime](https://vercel.com/docs/functions/runtimes/edge)
+Both user-supplied JPEG originals remain under `docs/assets/`. The transparent black raster master is retained there too. The website uses a 240px-wide derivative, reduced from 276 KB to approximately 15 KB for header/footer use. The favicon and 1200×630 social JPEG are included. No guessed vector master has been substituted.
 
-Provider deployment and live inbox delivery have not been exercised with a real hosting account or receiver.
+`DESIGN.md` records the current design and interaction decisions. `VERIFICATION.md` records checks and remaining limits. The earlier audit report is outside this source folder; this revision supersedes its pricing and preview recommendations.
 
-## Content and launch items
+Relevant implementation files:
 
-This MVP deliberately separates proposed content from verified business facts.
+- `public/index.html`, `public/services/*.html`, `public/privacy.html`: crawlable content.
+- `public/styles.css`: shared visual system and responsive rules.
+- `public/navigation.js`: shared navigation and current-year behavior.
+- `public/app.js`, `public/inquiry.js`, `public/validation.js`: inquiry UI, encoded email drafts, shared validation.
+- `lib/site-config.js`: public contact/capability configuration and privacy disclosure gate.
+- `lib/quote.js`, `lib/public-quote.js`: optional delivery and request limits.
+- `scripts/build.mjs`: six-page build and per-page SEO.
 
-- **Logo:** both supplied JPEGs were recovered and visually inspected. `docs/assets/original-palette-logo.jpeg` supplies the navy/teal/amber direction; `docs/assets/original-black-logo.jpeg` is the official black mark. `public/assets/p2-black.png` is the background-removed raster derivative. It preserves the visible mark and transparency; it is not a vector master. The original upload order returned by the chat reader differs from the order described in the request, so assets were identified visually.
-- **Colors:** approximate samples: navy `#06263e`, teal `#087d86` (darkened for action contrast), amber `#ffb900`, white. All runtime tokens are in `public/styles.css`.
-- **Portfolio:** fictional Northline Studio, Daily Bread Bakery, and Pulse Appointment Portal concepts. Interface illustrations are made with HTML/CSS. They are not working client systems, paid engagements, or evidence of business results. No testimonials or invented client counts.
-- **Pricing:** draft ranges from the earlier proposal. One-time builds plus separately optional monthly care. Confirm final offers, deliverables, taxes, ownership/licensing, payment terms, hosting, and edit limits before publishing commercial offers.
-- **About:** proposed positioning without invented history, team, certifications, customers, legal registration, or office address.
-- **Contact:** no email, phone, address, social link, or domain was supplied or invented. Add confirmed details before launch if desired.
-- **Privacy:** the inline notice describes this app’s actual behavior. Before enabling delivery, add business-specific contact details and receiving-service retention/deletion arrangements; obtain appropriate review for your actual practices. It is not a claim of legal certification.
-- **SEO:** update site copy, confirmed public domain, and sharing asset as needed. `social-card.jpg` (1200 × 630) is included for sharing previews, with its editable SVG source alongside it. No fabricated LocalBusiness address or ratings are embedded.
-
-## Accessibility and verification
-
-Semantic landmarks, heading hierarchy, skip link, associated labels/errors, native selects, native dialog, visible focus, keyboard controls, reduced-motion handling, responsive layouts, and no external font/network dependency. The submit button starts disabled until validation is installed; the fallback form uses POST to avoid putting personal data in a URL when JavaScript fails.
-
-See `VERIFICATION.md` for actual checks and limitations. These checks support the MVP; they do not claim formal WCAG certification or measured production Core Web Vitals.
-
-## File map
-
-- `public/index.html` — all crawlable page content and form markup.
-- `public/styles.css` — shared visual tokens, layouts, mobile rules, interaction states.
-- `public/app.js` — navigation, concept dialogs, package selection, quote/download UI.
-- `public/validation.js` — shared field rules used by browser and server.
-- `lib/quote.js` — request validation and acknowledged webhook delivery.
-- `lib/public-quote.js` — shared per-instance request limiting.
-- `server.mjs` — local development HTTP server and security headers.
-- `api/quote.js`, `netlify/functions/quote.mjs` — hosting adapters.
-- `scripts/build.mjs` — static build, public mode flag, production SEO configuration.
-- `tests/` — validation, privacy fallback, delivery failure, limiting, and local HTTP checks.
-- `DESIGN.md` — design choices and source of business assumptions.
-
-No runtime dependencies, API keys, analytics, customer database, authentication system, or CMS are bundled. The site can be extended without changing its honest preview behavior.
+Provider API/configuration references used for the original adapters: [Netlify Functions](https://docs.netlify.com/build/functions/api/) and [Vercel Edge runtime](https://vercel.com/docs/functions/runtimes/edge). Provider deployment behavior has not been exercised with an account in this session.

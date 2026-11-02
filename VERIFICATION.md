@@ -1,51 +1,56 @@
-# Verification record
+# Verification — official website revision
 
-Verified in this workspace on 3 November 2026 (Asia/Manila). Runtime: Node 26.13.0. Declared compatibility: Node 22.9+; that older runtime was not installed for a separate run.
+3 November 2026 (Asia/Manila). Node 26.13.0 used for checks; declared compatibility is Node 22.9+. No separate older-runtime test or hosted deployment is claimed.
 
-## Automated checks
+## Confirmed changes
 
-- `npm test`: **15 passed, 0 failed**, including real local HTTP serving/security headers and rate-limit responses. Also covers shared validation, input bounds/types, conditional phone contact, consent, cross-origin rejection, malformed/oversized requests, absent delivery configuration, receiver success/failure, no-JavaScript privacy fallback, and shared serverless limiter behavior.
-- Prettier check: all matched source files passed formatting.
-- `npm run check`: JavaScript syntax checks passed. Hosting adapter syntax was checked separately.
-- `npm run build`: passed with no external runtime dependencies. Result is `dist/` in honest download-preview mode.
-- A separate build with illustrative `SITE_URL=https://p2.example` and a dummy receiver URL verified canonical/robots/sitemap output and the public delivery flag. Receiver URL was absent from public HTML. Then rebuilt with no configuration to restore preview mode.
-- Key token contrasts calculated: white/teal 4.90:1; white/navy 15.50:1; white/muted 5.98:1; navy/amber 9.00:1.
-- PNG alpha verified present. Sharing JPEG verified 1200×630.
+- Public package names, price ranges, care fee tiers, Pricing links and package-budget prefills removed.
+- Scoped project fees and separately optional care explained without amounts.
+- Six crawlable pages: Home, four service detail pages, Privacy.
+- Confirmed public email paulrodolf.castor@g.msuiit.edu.ph; no invented founder, office, geography, domain, clients or history.
+- Required intake reduced to name, email, business/project, description and permission to respond. Scoping fields optional; budget free text.
+- Explicit email-draft preparation and user-controlled send step. Actual delivery never claimed for preparation.
+- Functional form/privacy/error text raised to 14px, inputs 16px; tiny brand descriptors removed. Concept disclosures made readable.
+- Header/footer logo resized to 240px width, 15,506 bytes versus original transparent master 276,357 bytes (approximately 94% fewer bytes). Master and both original user JPEGs retained.
 
-## Browser checks
+## Automated verification
 
-Real in-app Chromium browser, not inferred from source:
+`npm test`: **23 tests passed, zero failures** in the revision, including optional-field validation, safe recipient and message encoding, all collected email fields, privacy fallback, delivery success/failure behavior, shared rate limiting, public config secrecy, disclosure gating/escaping, local HTTP serving, and the five supporting page routes.
 
-- Desktop 1280px: full page visually inspected and captured; supplied black mark rendered on white without checkerboard.
-- Tablet 768px: document width matched viewport width.
-- Mobile 390px and 320px: document width matched viewport width after correcting the smallest-width header, price, and About heading overflow.
-- Mobile menu opens, closes on navigation, and exposes expanded state.
-- Starter/Professional selection prefills the intended service/budget.
-- Invalid form focuses the first invalid field and associates visible errors.
-- Valid preview creates a downloadable text request and explicitly states that it has not been sent. Download completed using fictional test details.
-- Changing package hides the old download and clears stale success feedback; new request preparation is required.
-- Phone preference reveals the phone input and requires a valid phone number; Email works without phone.
-- All three concept dialogs open with correct descriptions. Close button and Escape dismiss; focus returns to the triggering project button.
-- Native service select opens and can be dismissed by keyboard.
-- No console warnings or errors in the inspected flows.
-- Reduced-motion and forced-colors behavior reviewed in CSS; not exercised using an OS setting change. No formal assistive-technology audit or production Core Web Vitals measurement is claimed.
+`npm run check`: passed. Prettier check passed for HTML/CSS/JS source, shared libraries, build, server, and tests. The final formatting/build verification is performed before archive creation.
 
-Screenshots are supplied alongside the source folder as `p2-desktop.jpg`, `p2-mobile.jpg`, and `p2-full-page.jpg`.
+Default six-page build passed. A production build using the illustrative origin `https://p2.example` verified six sitemap entries, per-page canonical metadata, indexable production output, no public peso ranges or pricing anchors, and the owner-confirmed email. Then rebuilt without SITE_URL to restore safe staging indexing behavior. The illustrative domain is not a claimed P2 domain.
 
-## Review corrections
+A separate code review identified that Business type was omitted from the prepared email. A regression assertion failed first, the field was added, and the assertion passed. No other Important/Critical findings were reported by that review. Public contact/capability flags, disclosure escaping, and six-page config were also reviewed.
 
-A separate code review caught and led to fixes for:
-1. Native form fallback could expose personal details in a GET URL. Form now uses POST and submit starts disabled until the validated handler is installed; a regression test covers it.
-2. Hosting adapters bypassed local request limits. Both now use the shared per-instance limiter. Durable platform limits are still a launch configuration requirement.
-3. Programmatic package/concept prefills could leave a stale request download. Prefills now trigger the same invalidation flow as user input; browser check confirmed it.
+## Browser verification
 
-## Static UI audit caveat
+Real in-app Chromium browser:
 
-`premium-audit.json` preserves the strict skill audit output. It reports five `affordance.actionless-button` findings for the menu, three concept buttons, and dialog close button. Inspection of the scanner confirms it recognizes inline `onclick`/framework handlers, but not external `addEventListener` bindings. Those five controls are bound in `public/app.js` and were individually exercised in the browser. These are manually adjudicated false positives; the raw scanner does **not** report a clean pass. Native selects are explicitly recorded as owned by the OS in `premium-ui.json`; textarea sizing and global scrollbars are implemented in CSS.
+- Desktop 1280px: full page inspected, no horizontal overflow, no public peso amounts. Inquiry/service/engagement hierarchy and company copy checked.
+- Mobile 390px and 320px: page width matched viewport; real form labels measured 14px. Shared service and Privacy pages fit 320px.
+- Mobile menu opened and closed on section selection.
+- Empty form focused name and displayed correction feedback.
+- Valid minimal inquiry prepared the correctly encoded mailto link for the owner-confirmed address, with an honest “open draft, then send” status and downloadable backup.
+- No email app was launched and no real email was sent during verification. Mail-client delivery remains controlled by the visitor; a preconfigured mail app or direct email channel is necessary.
+- Editing a prepared inquiry hid the old email draft and download. Optional phone contact exposed a required phone input, focused it on error, and kept the optional disclosure open.
+- Service-page content and Privacy contact link checked independently; no captured browser console errors/warnings in tested flows.
+- Existing concept boundaries remain explicit. Portfolio items are design studies, not working client systems.
 
-## Remaining production configuration
+Screenshots accompany the source archive as p2-official-desktop.jpg, p2-official-mobile.jpg, and p2-official-full-page.jpg.
 
-- No hosted deployment or real inquiry receiver was configured or tested. Live sending needs the owner's HTTPS receiver and optional token, a rebuild, and a real end-to-end delivery check.
-- Configure a platform/durable rate rule for `/api/quote` before enabling public delivery. The in-memory limiter is bounded and shared by code paths, but not across serverless instances.
-- Confirm domain, public contact details, service prices/scope/terms, and receiver-specific privacy/retention arrangements. Preview indexing remains disabled until `SITE_URL` is set.
-- Logo is a transparent raster derivative with originals retained; a mathematically faithful vector master requires the original vector or careful vector tracing.
+## Detector and static audit interpretation
+
+Impeccable detector was run once on the completed changed UI: 31 raw observations across home, shared CSS, inquiry UI, Privacy and representative service page. These are not 31 independently verified bugs. The raw output is retained in the chat workspace's work/ folder.
+
+Remaining observations predominantly concern decorative mockup microtext/illustration clipping, intentional letterspaced labels inside mockups, legacy CSS rules overridden by the refinement, and stylistic shadow/border preferences. The contrast warning again assumes white behind the navy-section caption; computed background is navy. The contact display tracking was corrected to -.03em after review. Real form instructions, labels, errors and privacy link were checked separately from illustrative mockup text.
+
+The strict premium static audit is retained as premium-audit.json. It reports ten actionless-button findings: six shared page menu buttons, three concept buttons and the dialog close button. Its parser recognizes inline handlers, not the external addEventListener bindings in navigation.js/app.js. These bindings were reviewed; representative navigation and inquiry flows were exercised. This raw scanner does not report a clean pass, and its warnings have not been concealed.
+
+## Remaining deployment facts
+
+No public domain or host was supplied, so no public deployment or production field-performance measurement was performed. Source builds remain staging/noindex until SITE_URL is set. Confirm the live origin and HTTPS, page routes, robots/canonical/sitemap, and email-app flow after deployment.
+
+For direct website sending, the owner must configure an HTTPS inquiry receiver, any secret token, actual receiver-specific privacy disclosure, and durable/platform abuse protection; then test real receipt and failure recovery. The current email-app route works without those credentials and is described accurately in the UI.
+
+No formal WCAG certification, full assistive-technology/200%-zoom matrix, multi-browser certification, or legal compliance claim is made. Reduced-motion and forced-color styles are present; no OS setting changes were made during this run.

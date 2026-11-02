@@ -6,13 +6,6 @@ export const choices = {
     "E-commerce & integrations",
     "Help me decide",
   ],
-  budget: [
-    "₱20,000–₱35,000",
-    "₱45,000–₱75,000",
-    "₱80,000–₱150,000",
-    "₱150,000+",
-    "Care plan / let’s discuss",
-  ],
   timeline: ["Within a month", "1–2 months", "3+ months", "Just exploring"],
   contact: ["Email", "Phone"],
 };
@@ -28,6 +21,7 @@ export function validateQuote(input) {
     ["businessType", 0, 100, "your business type"],
     ["brief", 20, 5000, "a project brief of 20–5,000 characters"],
     ["phone", 0, 40, "a phone number"],
+    ["budget", 0, 100, "a short budget description"],
   ]) {
     data[key] = typeof source[key] === "string" ? source[key].trim() : "";
     if (
@@ -42,7 +36,8 @@ export function validateQuote(input) {
     errors.email = "Enter an email address such as name@business.com.";
   for (const [key, values] of Object.entries(choices)) {
     data[key] = typeof source[key] === "string" ? source[key] : "";
-    if (!values.includes(data[key]))
+    if (key === "contact" && !data[key]) data[key] = "Email";
+    if (data[key] && !values.includes(data[key]))
       errors[key] = "Choose one of the available options.";
   }
   if (data.contact === "Phone" && !/^[+\d][\d\s().-]{6,39}$/.test(data.phone))
