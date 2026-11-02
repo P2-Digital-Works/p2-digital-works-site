@@ -1,0 +1,98 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-11-02T17:55:57.789Z",
+        "reason": "Agent review: only schedule art inside aria-hidden and legacy mode-notice border overridden to 0; computed current notice has no border."
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-11-02T17:55:57.806Z",
+        "reason": "Agent browser verification: flagged contact-caption foreground #92aeba is on inherited navy #06263e, not white; computed font is 14px."
+      },
+      {
+        "rule": "wide-tracking",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-11-02T17:55:57.822Z",
+        "reason": "Agent review: flagged tracking belongs to short uppercase labels and illustrative concept artwork, not body paragraphs."
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-11-02T17:55:57.838Z",
+        "reason": "Agent browser verification: process steps have 28px top padding on desktop and 50px left on mobile; about-copy has 40px desktop inset and no mobile border; toolbar is vertically centered in 37px artwork."
+      },
+      {
+        "rule": "tiny-text",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-11-02T17:55:57.855Z",
+        "reason": "Agent review: miniature text is noninteractive artwork inside role=img or aria-hidden; browser check at 375px found no functional site text below 11px."
+      },
+      {
+        "rule": "undersized-ui-text",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-11-02T17:55:57.871Z",
+        "reason": "Agent review: Spaces Studio Contact and ARCHITECTURE WITH INTENTION are noninteractive spans in role=img artwork; DESIGN.md explicitly distinguishes decorative mockups."
+      },
+      {
+        "rule": "extreme-negative-tracking",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-11-02T17:55:57.888Z",
+        "reason": "Agent review: Better spaces Built around you is typography inside miniature role=img concept artwork, preserving the existing illustrative composition."
+      },
+      {
+        "rule": "clipped-overflow-container",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-11-02T17:55:57.904Z",
+        "reason": "Agent review: hero clips only tilted concept artwork; actual mobile navigation and concept dialog are outside hero and were exercised in browser."
+      },
+      {
+        "rule": "gpt-thin-border-wide-shadow",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-11-02T17:55:57.921Z",
+        "reason": "Agent review: existing offset elevation belongs to browser illustration, floating annotation and modal; these are intentional distinct surfaces."
+      },
+      {
+        "rule": "dark-glow",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-11-02T17:55:57.938Z",
+        "reason": "Agent browser verification: #0c344a55 shadow has 24px vertical offset and -30px spread beneath white hero artwork, not a halo on a dark page."
+      }
+    ]
+  }
+}

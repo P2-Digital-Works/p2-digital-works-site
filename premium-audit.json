@@ -3,7 +3,7 @@
     {
       "category": "violation",
       "file": "public/index.html",
-      "line": 43,
+      "line": 44,
       "message": "Enabled literal button has no detectable action or submit behavior.",
       "remediation": "Connect the button to a real action, make it a submit button, or disable/remove it.",
       "ruleId": "affordance.actionless-button",
@@ -12,7 +12,7 @@
     {
       "category": "violation",
       "file": "public/index.html",
-      "line": 283,
+      "line": 284,
       "message": "Enabled literal button has no detectable action or submit behavior.",
       "remediation": "Connect the button to a real action, make it a submit button, or disable/remove it.",
       "ruleId": "affordance.actionless-button",
@@ -21,7 +21,7 @@
     {
       "category": "violation",
       "file": "public/index.html",
-      "line": 306,
+      "line": 307,
       "message": "Enabled literal button has no detectable action or submit behavior.",
       "remediation": "Connect the button to a real action, make it a submit button, or disable/remove it.",
       "ruleId": "affordance.actionless-button",
@@ -30,7 +30,7 @@
     {
       "category": "violation",
       "file": "public/index.html",
-      "line": 346,
+      "line": 347,
       "message": "Enabled literal button has no detectable action or submit behavior.",
       "remediation": "Connect the button to a real action, make it a submit button, or disable/remove it.",
       "ruleId": "affordance.actionless-button",
@@ -39,7 +39,7 @@
     {
       "category": "violation",
       "file": "public/index.html",
-      "line": 809,
+      "line": 810,
       "message": "Enabled literal button has no detectable action or submit behavior.",
       "remediation": "Connect the button to a real action, make it a submit button, or disable/remove it.",
       "ruleId": "affordance.actionless-button",
@@ -92,7 +92,7 @@
     }
   ],
   "mode": "strict",
-  "projectRoot": "/Users/prpc/Documents/Codex/2026-11-02/referenced-chatgpt-conversation-this-is-an/outputs/p2-digital-works",
+  "projectRoot": "/Users/prpc/Projects_2026/p2-digital-works",
   "schemaVersion": 1,
   "summary": {
     "errors": 10,

@@ -3,6 +3,8 @@
   publish = "dist"
 [build.environment]
   NODE_VERSION = "22"
+[context.production.environment]
+  SITE_URL = "https://p2digitalworks.netlify.app"
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
